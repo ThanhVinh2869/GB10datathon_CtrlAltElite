@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GB10 Hackathon Primer</title>
+<style>
+  :root {
+    --blue: #0672CB;      /* Dell Blue */
+    --slate: #405060;
+    --ink: #1D2C3B;
+    --muted: #5b6a7f;
+    --panel: #f4f7fb;
+    --border: #dbe3ee;
+    --code-bg: #f0f3f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #fff; color: var(--ink);
+    font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 32px 22px 96px; }
+
+  header.doc { border-bottom: 3px solid var(--blue); padding-bottom: 20px; margin-bottom: 8px; }
+  header.doc .kicker { color: var(--blue); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: .82rem; }
+  header.doc h1 { margin: 4px 0 6px; font-size: 2.1rem; letter-spacing: -.01em; color: var(--ink); }
+  header.doc .sub { color: var(--muted); margin: 0; font-size: 1.05rem; }
+
+  .toc { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 22px; margin: 22px 0; }
+  .toc h2 { margin: 0 0 8px; font-size: .85rem; color: var(--slate); text-transform: uppercase; letter-spacing: .08em; }
+  .toc ol { margin: 0; padding-left: 1.3rem; columns: 2; column-gap: 2rem; }
+  .toc li { margin: 3px 0; font-size: .95rem; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  h2.sec {
+    font-size: 1.4rem; color: var(--ink); margin: 40px 0 6px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  h2.sec .num { color: var(--blue); font-weight: 700; margin-right: 6px; }
+  h3 { font-size: 1.05rem; color: var(--slate); margin: 22px 0 4px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0; padding-left: 1.5rem; }
+  li { margin: 5px 0; }
+
+  code {
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    background: var(--code-bg); border: 1px solid var(--border); padding: 1px 6px;
+    border-radius: 4px; font-size: .88em;
+  }
+  pre {
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: .86rem; line-height: 1.55; margin: 12px 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: .94rem; }
+  th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); font-weight: 600; color: var(--slate); }
+  td code, th code { background: transparent; border: none; padding: 0; }
+
+  .callout { border-left: 4px solid var(--blue); background: #eef5fc; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: .95rem; }
+  .callout b { color: var(--slate); }
+  .tip { border-left: 4px solid #1c7a4d; background: #eefaf3; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: .95rem; }
+
+  .back-top { display: inline-block; font-size: .8rem; color: var(--blue); text-decoration: none; margin-top: 8px; }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; }
+
+  @media print {
+    .wrap { max-width: none; padding: 0; }
+    h2.sec { break-after: avoid; }
+    pre, table, .callout, .tip { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <div class="kicker">HiEd Hackathon</div>
+  <h1>GB10 Hackathon Primer</h1>
+  <p class="sub">A quick brush-up guide for participants from any background — CS, UX, design, or otherwise. Read the sections you need, skip the rest.</p>
+</header>
+
+<div class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#what-is-gb10">What is the GB10?</a></li>
+    <li><a href="#llm-basics">LLM basics: tokens, context, temperature</a></li>
+    <li><a href="#docker">What is a Docker container?</a></li>
+    <li><a href="#venv">What is a Python virtual environment?</a></li>
+    <li><a href="#jupyter">Jupyter Notebooks</a></li>
+    <li><a href="#prompting">Basics of prompting</a></li>
+    <li><a href="#local-models">Working with local models</a></li>
+    <li><a href="#vllm">Model servers: Ollama, LM Studio, vLLM</a></li>
+    <li><a href="#hermes">Basics of Hermes / Hermes Desktop</a></li>
+    <li><a href="#linux">Basic Linux commands</a></li>
+    <li><a href="#nvidia-smi">Monitoring the GPU with nvidia-smi</a></li>
+    <li><a href="#ssh">SSH: connect to the GB10</a></li>
+    <li><a href="#git">Git basics</a></li>
+    <li><a href="#calling-model">Calling a local model (API)</a></li>
+    <li><a href="#walkthrough">15-minute warm-up walkthrough</a></li>
+    <li><a href="#cheatsheet">Quick-reference cheatsheet</a></li>
+    <li><a href="#glossary">Glossary</a></li>
+  </ol>
+</div>
+
+<h2 class="sec" id="what-is-gb10"><span class="num">1.</span>What is the GB10?</h2>
+<p>The <b>GB10</b> is the NVIDIA Grace Blackwell superchip inside the Dell Pro Max with GB10 — a desk-side AI workstation. The headline spec is <b>128 GB of unified memory</b>, shared between the CPU and GPU, which is what lets it run large AI models that a normal laptop can't fit.</p>
+<ul>
+  <li>It runs <b>large language models (LLMs) locally</b> — no cloud, no internet required, no per-token cost.</li>
+  <li>Your data stays on the machine (privacy) and there's no network latency.</li>
+  <li>It's the "computer that thinks" you'll be building on during the hackathon.</li>
+</ul>
+<div class="callout"><b>Bottom line:</b> the GB10 is a powerful local-AI box. You'll interact with it through the terminal, a model server like Ollama or vLLM, and tools like Hermes.</div>
+
+<h2 class="sec" id="llm-basics"><span class="num">2.</span>LLM basics: tokens, context, temperature</h2>
+<p>Three concepts make everything else click:</p>
+<ul>
+  <li><b>Tokens</b> — the chunks of text a model actually reads and writes. Roughly, 1 token ≈ ¾ of a word (a token can be a word, part of a word, or punctuation). Models count their work in tokens.</li>
+  <li><b>Context window</b> — how much text the model can "see" at once (measured in tokens). If you go over it, the model forgets the oldest part. The GB10 can hold a large context window for long documents.</li>
+  <li><b>Temperature</b> — the "randomness" dial. <code>0</code> = deterministic (same input, same output — good for code and facts); higher values (0.7–1.0) = more varied/creative (good for brainstorming and writing).</li>
+</ul>
+<div class="tip"><b>Speed matters too:</b> you'll see "tokens per second" (tok/s). Higher is snappier. Local models report this so you can compare how fast different models feel.</div>
+
+<h2 class="sec" id="docker"><span class="num">3.</span>What is a Docker container?</h2>
+<p>A <b>container</b> is a lightweight, isolated package that bundles an application with <i>everything it needs to run</i> — code, libraries, dependencies, settings — into one portable unit. It runs the same way on the GB10, your laptop, or a server.</p>
+<p><b>Analogy:</b> think of a shipping container. Whatever's inside, it's a standard box that fits on any ship, truck, or crane. A Docker container does the same for software.</p>
+<p>Key vocabulary:</p>
+<ul>
+  <li><b>Image</b> — the blueprint (a snapshot of the app + dependencies). You build it once.</li>
+  <li><b>Container</b> — a running instance of an image.</li>
+  <li><b>Dockerfile</b> — the recipe that defines how to build an image.</li>
+  <li><b>Registry</b> — a library of pre-built images (like Docker Hub) you can pull from.</li>
+</ul>
+<p>Why it matters here: you can run a model server (like vLLM) or an entire app in a container, and it behaves identically everywhere — no "works on my machine" problems.</p>
+<pre><code># Pull an image
+docker pull &lt;image&gt;
+
+# Run a container from it
+docker run -d --name myapp &lt;image&gt;
+
+# See what's running
+docker ps
+
+# List images you have
+docker images
+
+# Run a command inside a running container
+docker exec -it myapp bash</code></pre>
+
+<h2 class="sec" id="venv"><span class="num">4.</span>What is a Python virtual environment?</h2>
+<p>A <b>virtual environment</b> ("venv") is an isolated copy of Python for one project, so its packages don't clash with other projects. If project A needs version 1.0 of a library and project B needs 2.0, two venvs keep them separate.</p>
+<pre><code># Create a venv called "venv"
+python -m venv venv
+
+# Activate it (Linux / macOS)
+source venv/bin/activate
+
+# Activate it (Windows)
+venv\Scripts\activate
+
+# Install packages (now scoped to this venv)
+pip install &lt;package&gt;
+
+# Leave the venv
+deactivate</code></pre>
+<div class="tip"><b>Rule of thumb:</b> one venv per project. Activate it before installing or running anything, and you'll never have "but it worked yesterday" dependency conflicts.</div>
+
+<h2 class="sec" id="jupyter"><span class="num">5.</span>Jupyter Notebooks</h2>
+<p>A <b>Jupyter Notebook</b> is an interactive, browser-based document for running Python in small chunks called <b>cells</b>. Each cell holds code <i>or</i> formatted notes (markdown), and the result — text, a chart, a table — appears right below the code. That makes it ideal for exploring data and AI models, and for showing your work.</p>
+<p><b>Why it matters here:</b> it's the fastest way to call a model, inspect the output, tweak it, and visualize results — all in one live, shareable document.</p>
+<h3>Installing + launching</h3>
+<pre><code># In your project's venv
+pip install jupyterlab
+
+# Launch it (opens a browser tab)
+jupyter lab</code></pre>
+<h3>The basics</h3>
+<ul>
+  <li><b>Cells</b> — a notebook is a stack of cells. Code cells run Python; Markdown cells are for notes and headings.</li>
+  <li><b>Run a cell</b> — <b>Shift+Enter</b> runs the current cell and moves to the next. Output appears just below it.</li>
+  <li><b>Variables persist</b> — a variable defined in one cell is available in the next, so run cells top-to-bottom (order matters).</li>
+  <li><b>Kernel</b> — the live Python process behind the notebook. Restart it (Kernel → Restart) to clear all state.</li>
+</ul>
+<h3>Two handy tricks</h3>
+<pre><code># Run shell commands from inside a cell by starting with ! or %
+%pip install requests
+
+# A variable on its own line prints its value:
+x = 3 + 4
+x     # → 7</code></pre>
+<div class="tip"><b>Typical flow:</b> one notebook per experiment — load the model call in one cell, tweak the prompt in the next, chart the result below. Then share the <code>.ipynb</code> file with your team.</div>
+
+<h2 class="sec" id="prompting"><span class="num">6.</span>Basics of prompting</h2>
+<p>A <b>prompt</b> is the instruction you give an LLM. The quality of your prompt directly shapes the quality of the answer. Good prompting is a skill you'll use constantly.</p>
+<p>Five things that improve results:</p>
+<ul>
+  <li><b>Be specific.</b> "Write a Python script that reads a CSV and prints the average of column 'score'" beats "analyze my data."</li>
+  <li><b>Give context.</b> Tell the model what you're doing and why — it has no other context about you.</li>
+  <li><b>Show examples.</b> Give one or two input→output examples ("few-shot") so it matches your format.</li>
+  <li><b>Specify the output format.</b> "Respond as a JSON object with keys …" or "use bullet points."</li>
+  <li><b>Iterate.</b> Treat the first answer as a draft. Ask it to refine, shorten, or fix a specific part.</li>
+</ul>
+<p>Two extra techniques:</p>
+<ul>
+  <li><b>System prompt</b> — a standing instruction ("You are a helpful tutor who explains in plain English") that frames the whole conversation.</li>
+  <li><b>Chain-of-thought</b> — asking the model to "think through this step by step" improves reasoning on harder problems.</li>
+</ul>
+<div class="callout"><b>What NOT to do:</b> vague one-word requests and assuming the model knows your intent. It's powerful but it can't read your mind — clarity is on you.</div>
+
+<h2 class="sec" id="local-models"><span class="num">7.</span>Working with local models</h2>
+<p>A <b>local model</b> is an LLM running on your own hardware (the GB10) instead of in the cloud. Instead of sending your text to an API over the internet, it runs right on the box.</p>
+<p><b>Why local:</b></p>
+<ul>
+  <li><b>Privacy</b> — your prompts and data never leave the machine.</li>
+  <li><b>No per-token cost</b> — free to experiment, no API bill.</li>
+  <li><b>Works offline</b> — no internet needed once the model is downloaded.</li>
+  <li><b>Full control</b> — you pick the model, the quantization, the settings.</li>
+</ul>
+<p>How it works: a <b>model server</b> (Ollama is the easy one; vLLM is the high-performance one) loads a model file and exposes a local API. You talk to it with a chat UI or by calling that API from your code. <a href="#vllm">The next section compares the main servers.</a></p>
+<p>Terms you'll hear:</p>
+<ul>
+  <li><b>Model weights</b> — the learned parameters of the model (the file you download).</li>
+  <li><b>Quantization</b> — compressing the weights (e.g. 4-bit) to use less memory, at a small cost to quality.</li>
+  <li><b>Tokens/sec</b> — how fast the model generates.</li>
+</ul>
+<pre><code># With Ollama — pull a model, then chat
+ollama pull qwen3.8:27b
+ollama run qwen3.8:27b</code></pre>
+
+<h2 class="sec" id="vllm"><span class="num">8.</span>Model servers: Ollama, LM Studio, vLLM</h2>
+<p>A <b>model server</b> loads a model into memory and exposes an API so you (or many users at once) can send it requests. Three common choices do the same core job — the difference is ease vs. speed.</p>
+<table>
+  <tr><th>Server</th><th>Best for</th><th>How it runs</th></tr>
+  <tr><td><b>Ollama</b></td><td>Quick local use, one model, easy setup</td><td>llama.cpp under the hood; GGUF models; <code>ollama run</code></td></tr>
+  <tr><td><b>LM Studio</b></td><td>Desktop GUI — browse, download, chat</td><td>Also llama.cpp-based; point-and-click, no terminal</td></tr>
+  <tr><td><b>vLLM</b></td><td>High-throughput serving, many concurrent users</td><td>Custom engine tuned for NVIDIA GPUs; HTTP server</td></tr>
+</table>
+<p><b>Ollama</b> is the easiest path and perfect for one person. <b>LM Studio</b> is a friendly desktop app for trying models visually. <b>vLLM</b> is the performance choice — built to serve many requests at once as fast as the GPU allows, which matters the moment more than one person shares the box.</p>
+<p><b>Why vLLM is fast on NVIDIA hardware like the GB10:</b></p>
+<ul>
+  <li><b>Continuous batching</b> — instead of one request at a time, it packs many together and runs them through the GPU in parallel. Under load, this is the biggest single win.</li>
+  <li><b>PagedAttention</b> — manages the model's memory (the "KV cache") in small pages, wasting less and fitting longer contexts.</li>
+  <li><b>NVIDIA-native quantization</b> — supports high-efficiency formats like FP8 and (on Blackwell) <b>NVFP4</b>, packing the model smaller to run it faster on the GB10's GPU.</li>
+  <li><b>Optimized kernels</b> — fused CUDA operations tuned specifically for NVIDIA GPUs.</li>
+</ul>
+<p>Net: for a single user, Ollama and vLLM feel similar. For a hackathon where a team shares one GB10, vLLM keeps everyone responsive at once instead of queueing.</p>
+<pre><code># Serve a model with vLLM (OpenAI-compatible API on port 8000)
+vllm serve Qwen/Qwen3-8B --port 8000
+
+# Call it from your code — same shape as Ollama, just a different URL
+curl <a href="https://urldefense.com/v3/__http://localhost:8000/v1/chat/completions__;!!LpKI!kC7LyichBNiWcp1AfmxgZnHyGuAnWQe3MzrI0mPqk_pw0spau9F4ulCdG1RPXJZtIop1-AdI2DFSDfpSm9Y$">http://localhost:8000/v1/chat/completions [localhost]</a> \
+  -H "Content-Type: application/json" \
+  -d '{"model": "Qwen/Qwen3-8B",
+       "messages": [{"role":"user","content":"Hello!"}]}'</code></pre>
+<div class="callout"><b>Rule of thumb:</b> start with Ollama to get a model running in seconds; reach for vLLM when you need speed under load, or want to squeeze the most performance out of the GB10.</div>
+
+<h2 class="sec" id="hermes"><span class="num">9.</span>Basics of Hermes / Hermes Desktop</h2>
+<p><b>Hermes</b> is an AI <b>agent</b> framework. Where a plain LLM only <i>talks</i>, an agent can <i>act</i> — it can run terminal commands, read and write files, search the web, and chain those actions to finish a multi-step task.</p>
+<ul>
+  <li><b>Chat</b> — ask it questions like any assistant.</li>
+  <li><b>Tools</b> — it can run commands, edit files, browse, and more, then reason over the results.</li>
+  <li><b>Memory</b> — it can remember context across a session.</li>
+  <li><b>Skills</b> — reusable procedures it's learned.</li>
+</ul>
+<p><b>Hermes Desktop</b> is the graphical app (vs. the terminal). Same agent, friendlier UI — type in a chat, watch it work, see what tools it's using.</p>
+<div class="tip"><b>For the hackathon:</b> treat Hermes as a coding + research partner. Give it a concrete task ("scaffold a FastAPI endpoint that does X"), watch what it does, and correct it. The loop of <i>instruct → observe → correct</i> is the core skill.</div>
+
+<h2 class="sec" id="linux"><span class="num">10.</span>Basic Linux commands</h2>
+<p>The GB10 runs Ubuntu (Linux), so you'll use the terminal. Here's the starter set — learn these and you can get around.</p>
+<table>
+  <tr><th>Command</th><th>What it does</th></tr>
+  <tr><td><code>pwd</code></td><td>Print the current directory ("where am I?")</td></tr>
+  <tr><td><code>ls</code> / <code>ls -la</code></td><td>List files (add <code>-la</code> for hidden files + details)</td></tr>
+  <tr><td><code>cd &lt;dir&gt;</code></td><td>Change directory (<code>cd ..</code> = up one level)</td></tr>
+  <tr><td><code>mkdir &lt;name&gt;</code></td><td>Create a directory</td></tr>
+  <tr><td><code>cp</code> / <code>mv</code></td><td>Copy / move (or rename) a file</td></tr>
+  <tr><td><code>rm &lt;file&gt;</code></td><td>Remove a file (careful — no undo)</td></tr>
+  <tr><td><code>cat &lt;file&gt;</code></td><td>Print a file's contents</td></tr>
+  <tr><td><code>grep &lt;pattern&gt; &lt;file&gt;</code></td><td>Search inside files for a pattern</td></tr>
+  <tr><td><code>sudo &lt;cmd&gt;</code></td><td>Run a command as administrator</td></tr>
+  <tr><td><code>apt install &lt;pkg&gt;</code></td><td>Install a system package</td></tr>
+  <tr><td><code>curl &lt;url&gt;</code></td><td>Fetch a URL from the command line</td></tr>
+  <tr><td><code>ssh user@host</code></td><td>Connect to another machine remotely</td></tr>
+  <tr><td><code>nvidia-smi</code></td><td>Show GPU status / usage</td></tr>
+  <tr><td><code>htop</code></td><td>Live view of CPU/memory usage</td></tr>
+  <tr><td><code>man &lt;cmd&gt;</code></td><td>Show the manual for a command (press <code>q</code> to quit)</td></tr>
+</table>
+<div class="tip"><b>If you're lost:</b> <code>man &lt;command&gt;</code> explains any command, and <code>--help</code> (e.g. <code>ls --help</code>) gives a quick summary.</div>
+
+<h2 class="sec" id="nvidia-smi"><span class="num">11.</span>Monitoring the GPU with nvidia-smi</h2>
+<p><code>nvidia-smi</code> (NVIDIA System Management Interface) is the command that tells you what your GPU is doing <i>right now</i>. On the GB10 it's the fastest way to confirm your model is actually using the chip — and whether the GPU is the bottleneck.</p>
+<h3>What it's for</h3>
+<ul>
+  <li><b>Confirm the GPU is present and healthy</b> — the first check after booting.</li>
+  <li><b>See GPU utilization</b> — how busy the chip is (0% = idle, near 100% = working flat out).</li>
+  <li><b>See memory usage</b> — how much of the GPU's memory is in use, and total available.</li>
+  <li><b>See what's using it</b> — which processes (Ollama, vLLM, Python) are on the GPU.</li>
+  <li><b>Check temperature and power</b> — mostly for diagnostics.</li>
+</ul>
+<h3>The basic command</h3>
+<pre><code>nvidia-smi</code></pre>
+<p>It prints a table with the GPU name, <b>Utilization</b> (GPU compute and memory), <b>Memory-Usage</b> (used / total), <b>Temperature</b>, and a list of running processes with how much memory each holds.</p>
+<h3>Watch it live</h3>
+<pre><code># Refresh every 1 second (Ctrl+C to stop)
+nvidia-smi -l 1
+
+# One-time snapshot with just the numbers you care about:
+nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv</code></pre>
+<h3>Reading the key numbers</h3>
+<ul>
+  <li><b>GPU-Util</b> — % of GPU compute in use. 0% = idle. A model actively generating sits near 100%. Low % while a model feels slow means the bottleneck is elsewhere (memory, CPU, or the model is just small).</li>
+  <li><b>Memory</b> — used vs. total. Each loaded model reserves a chunk of memory; this is how you tell whether a model fits or an old one is still loaded.</li>
+  <li><b>Processes</b> — one line per program using the GPU. Use it to find a "stuck" process after you've stopped a server.</li>
+</ul>
+<div class="tip"><b>Practical habit:</b> run <code>nvidia-smi</code> before and after starting a model — memory will jump once it's loaded, and GPU-Util climbs while your prompt is generating. That proves it's really on the chip.</div>
+<div class="callout"><b>Why it matters at a hackathon:</b> when a model is slow or errors, <code>nvidia-smi</code> is the first diagnostic — is it memory (model doesn't fit), utilization (something else is hogging the GPU), or empty (the model never loaded)?</div>
+
+<h2 class="sec" id="ssh"><span class="num">12.</span>SSH: connect to the GB10</h2>
+<p><b>SSH</b> (Secure Shell) is the way you securely control another computer over the network — from your own terminal. You type commands on your laptop, but they execute on the GB10, and everything you send is encrypted.</p>
+<p><b>How it works:</b> you run <code>ssh user@address</code>; the GB10 verifies who you are (a password or an SSH key), then opens a secure channel. From then on, your terminal is effectively "inside" the GB10 — run a model, edit a file, start a server, all remotely.</p>
+<h3>1. Set up the GB10 (server side)</h3>
+<pre><code># On the GB10, install and start the SSH server
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+
+# Find the address and username you'll connect with
+hostname -I    # the IP address (e.g. 192.168.1.10)
+whoami         # the username (e.g. gb10)</code></pre>
+<h3>2. Connect from your own device (client side)</h3>
+<p>Linux and macOS ship <code>ssh</code> built in. On Windows 10/11, open PowerShell or Windows Terminal (the OpenSSH client is included).</p>
+<pre><code># Connect — you'll be prompted for the GB10's password
+ssh username@IP-address
+
+# Example
+ssh gb10@192.168.1.10</code></pre>
+<h3>3. (Optional) Key-based login — skip the password every time</h3>
+<pre><code># On YOUR device, generate a key pair (accept the defaults)
+ssh-keygen
+
+# Copy your public key to the GB10 (enter its password one last time)
+ssh-copy-id username@IP-address
+
+# From now on, ssh connects without a password
+ssh username@IP-address</code></pre>
+<div class="tip"><b>Why keys beat passwords:</b> a key can't be guessed, you don't retype a password, and it's required for scripts and automation that connect unattended.</div>
+<div class="callout"><b>In practice:</b> SSH is how you'll drive the GB10 from your laptop — run a model, start a server, check <code>nvidia-smi</code> — all from your own machine, without a monitor or keyboard on the box itself.</div>
+
+<h2 class="sec" id="git"><span class="num">13.</span>Git basics</h2>
+<p><b>Git</b> is version control — it tracks every change to your code so you can collaborate and never lose work. You'll want it for team projects.</p>
+<pre><code># Copy a repository to your machine
+git clone &lt;repo-url&gt;
+
+# Stage + commit your changes
+git add .
+git commit -m "describe what you changed"
+
+# Share with the team / get their changes
+git push
+git pull
+
+# Work on a separate branch
+git checkout -b my-feature</code></pre>
+<div class="callout"><b>Golden rule:</b> commit often with clear messages. It's your safety net — if you break something, you can always get back to a working version.</div>
+
+<h2 class="sec" id="calling-model"><span class="num">14.</span>Calling a local model (API)</h2>
+<p>Once a model is running locally, your code talks to it over a local HTTP API — the same "chat" format as OpenAI, but pointing at your own machine instead of the cloud.</p>
+<pre><code># Ollama's local endpoint (OpenAI-compatible)
+curl <a href="https://urldefense.com/v3/__http://localhost:11434/v1/chat/completions__;!!LpKI!kC7LyichBNiWcp1AfmxgZnHyGuAnWQe3MzrI0mPqk_pw0spau9F4ulCdG1RPXJZtIop1-AdI2DFSJ1LtSyA$">http://localhost:11434/v1/chat/completions [localhost]</a> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen3.8:27b",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</code></pre>
+<p>That's the whole trick: you're swapping a cloud URL for <code>localhost</code>. Any "call an LLM" tutorial works the same, just with your local model name and port (Ollama uses <code>11434</code>; vLLM defaults to <code>8000</code>).</p>
+
+<h2 class="sec" id="walkthrough"><span class="num">15.</span>15-minute warm-up: prove the stack works</h2>
+<p>Before the event kicks off, spend 15 minutes on this once. If every step works, your environment is ready — and you'll have your first local model call behind you.</p>
+<ol>
+  <li><b>Connect to the GB10</b> — <code>ssh user@ip</code> (see the SSH section).</li>
+  <li><b>Confirm the GPU is alive</b> — run <code>nvidia-smi</code>; it should list the GB10's GPU.</li>
+  <li><b>Pull and start a model</b> — <code>ollama pull qwen3.8:27b</code>, then <code>ollama run qwen3.8:27b</code>.</li>
+  <li><b>Run one prompt</b> — type a question, press Enter, confirm a sensible answer. Type <code>/bye</code> to exit.</li>
+  <li><b>Call the API from the terminal</b> — the curl example in "Calling a local model," pointed at <code>localhost:11434</code>.</li>
+  <li><b>(Optional) Call it from Python</b> — make a venv, <code>pip install openai</code>, send one request (below).</li>
+</ol>
+<pre><code># On the GB10, in order:
+ssh user@ip                 # 1 · connect
+nvidia-smi                  # 2 · GPU present?
+
+ollama pull qwen3.8:27b     # 3 · fetch the model
+ollama run qwen3.8:27b      #    · chat — type a question, /bye to exit
+
+curl <a href="https://urldefense.com/v3/__http://localhost:11434/v1/chat/completions__;!!LpKI!kC7LyichBNiWcp1AfmxgZnHyGuAnWQe3MzrI0mPqk_pw0spau9F4ulCdG1RPXJZtIop1-AdI2DFSJ1LtSyA$">http://localhost:11434/v1/chat/completions [localhost]</a> \
+  -H "Content-Type: application/json" \
+  -d '{"model":"qwen3.8:27b","messages":[{"role":"user","content":"Say hi!"}]}'</code></pre>
+<pre><code># Optional Python version (inside a venv):
+from openai import OpenAI
+client = OpenAI(base_url="<a href="https://urldefense.com/v3/__http://localhost:11434/v1__;!!LpKI!kC7LyichBNiWcp1AfmxgZnHyGuAnWQe3MzrI0mPqk_pw0spau9F4ulCdG1RPXJZtIop1-AdI2DFS3gKl9Wg$">http://localhost:11434/v1 [localhost]</a>", api_key="local")
+r = client.chat.completions.create(
+    model="qwen3.8:27b",
+    messages=[{"role": "user", "content": "Say hi!"}],
+)
+print(r.choices[0].message.content)</code></pre>
+<div class="tip"><b>All six working?</b> You're fully set up — the rest of the hackathon is building on this exact loop: prompt the model, read the output, call it from code.</div>
+
+<h2 class="sec" id="cheatsheet"><span class="num">16.</span>Quick-reference cheatsheet</h2>
+<table>
+  <tr><th>Task</th><th>Command / approach</th></tr>
+  <tr><td>See what's running</td><td><code>docker ps</code>, <code>htop</code>, <code>nvidia-smi</code></td></tr>
+  <tr><td>Start a project</td><td><code>python -m venv venv</code> → <code>source venv/bin/activate</code></td></tr>
+  <tr><td>Pull + run a model</td><td><code>ollama pull &lt;model&gt;</code>, <code>ollama run &lt;model&gt;</code></td></tr>
+  <tr><td>Serve fast / to a team</td><td><code>vllm serve &lt;model&gt; --port 8000</code></td></tr>
+  <tr><td>Connect to the GB10</td><td><code>ssh user@ip</code></td></tr>
+  <tr><td>Call the model from code</td><td><code>localhost:11434</code> (Ollama) or <code>localhost:8000</code> (vLLM)</td></tr>
+  <tr><td>Interactive Python / notebooks</td><td><code>jupyter lab</code></td></tr>
+  <tr><td>Save your work</td><td><code>git add . && git commit -m "msg"</code></td></tr>
+  <tr><td>Get help on a command</td><td><code>man &lt;cmd&gt;</code> or <code>&lt;cmd&gt; --help</code></td></tr>
+</table>
+
+<h2 class="sec" id="glossary"><span class="num">17.</span>Glossary</h2>
+<p>The terms that come up everywhere, in one place.</p>
+<table>
+  <tr><th>Term</th><th>Meaning</th></tr>
+  <tr><td><code>LLM</code></td><td>Large Language Model — an AI trained to read and write text.</td></tr>
+  <tr><td><code>token</code></td><td>The chunk of text a model reads/writes (~¾ of a word).</td></tr>
+  <tr><td><code>context window</code></td><td>How much text the model can "see" at once, in tokens.</td></tr>
+  <tr><td><code>temperature</code></td><td>The randomness dial (0 = deterministic, higher = creative).</td></tr>
+  <tr><td><code>prompt</code></td><td>The instruction you give a model.</td></tr>
+  <tr><td><code>model weights</code></td><td>The learned parameters — the model file you download.</td></tr>
+  <tr><td><code>quantization</code></td><td>Compressing the weights (e.g. 4-bit) to use less memory.</td></tr>
+  <tr><td><code>inference</code></td><td>Running a model to get output (vs. training it).</td></tr>
+  <tr><td><code>tok/s</code></td><td>Tokens per second — how fast the model generates.</td></tr>
+  <tr><td><code>API</code></td><td>The interface code uses to talk to a program (e.g. call the model).</td></tr>
+  <tr><td><code>model server</code></td><td>Software that loads a model and serves requests (Ollama, vLLM).</td></tr>
+  <tr><td><code>container / image</code></td><td>A packaged app + its dependencies (Docker).</td></tr>
+  <tr><td><code>venv</code></td><td>An isolated Python environment for one project.</td></tr>
+  <tr><td><code>SSH</code></td><td>Encrypted remote connection to another machine.</td></tr>
+  <tr><td><code>agent</code></td><td>An AI that can <i>act</i> (run tools), not just talk — like Hermes.</td></tr>
+  <tr><td><code>GPU</code></td><td>The parallel processor that runs models fast (NVIDIA, on the GB10).</td></tr>
+  <tr><td><code>GB10</code></td><td>The NVIDIA Grace Blackwell chip in the Dell Pro Max (128 GB unified memory).</td></tr>
+</table>
+
+<div class="callout"><b>Where to get help during the event:</b> ask a mentor, ask Hermes ("how do I …"), or run <code>man &lt;command&gt;</code>. Getting un-stuck fast is a skill too — don't spin in place for long.</div>
+
+<footer>GB10 Hackathon Primer · HiEd Hackathons · built for participants from any background</footer>
+</div>
+</body>
+</html>

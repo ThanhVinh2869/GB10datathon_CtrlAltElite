@@ -1,0 +1,14 @@
+locality,event,county,tiles,risk_mean,risk_p90,flooded_share,observed,predicted,exposure,lat,lon,critical_tiles,lwc_tiles,raw_score,score,rank
+Richmond / Rosenberg / Brazos,Hurricane Harvey,Fort Bend County,165,71.85,86.06,0.891,0.761,0.85,0.416,29.557425188740947,-95.69050181995739,104,59,77.5,76.9,1
+Forest Cove / Kingwood,Hurricane Harvey,Montgomery County,85,67.219,87.44,0.706,0.614,0.852,0.548,30.02543180046047,-95.22571159811581,37,39,75.3,74.5,2
+Eldridge / northwest Houston,Hurricane Harvey,Harris County,7,82.343,86.9,1.0,0.888,0.73,0.802,29.851874597142857,-95.6128365642857,7,3,84.2,74.2,3
+Kingwood / northeast Houston,Hurricane Harvey,Harris County,8,79.962,86.31,1.0,0.862,0.913,0.474,30.031055395,-95.19104004,7,3,82.5,74.1,4
+Bevil Oaks / Pine Island Bayou,Hurricane Harvey,Jefferson County,25,67.68,87.12,0.84,0.754,0.681,0.478,30.13800113301945,-94.24281005859375,14,10,75.5,73.1,5
+Bear Creek / west Houston,Hurricane Harvey,Harris County,10,72.01,84.08,0.9,0.749,0.719,0.649,29.838261381000002,-95.633239747,6,3,76.8,72.1,6
+Simonton / Brazos,Hurricane Harvey,Fort Bend County,25,67.588,79.98,0.96,0.713,0.841,0.335,29.67497600770206,-96.01468505859376,12,13,72.5,71.0,7
+West Houston / Addicks and Barker,Hurricane Harvey,Harris County,250,63.25,82.02,0.816,0.615,0.776,0.462,29.78472096826177,-95.65892578125,84,64,70.8,70.6,8
+Center Point / Guadalupe River,July 2025 Texas Hill Country flooding,Kerr County,13,48.562,57.98,0.462,0.352,0.761,0.407,29.94678834590658,-99.03614924504207,0,7,52.3,47.5,9
+Hunt / Guadalupe River,July 2025 Texas Hill Country flooding,Kerr County,10,47.88,51.77,0.4,0.344,0.68,0.514,30.068856187885956,-99.333984375,0,8,49.4,45.4,10
+Comfort / Guadalupe River,July 2025 Texas Hill Country flooding,Kendall County,5,47.34,54.74,0.4,0.351,0.763,0.345,29.950413019092355,-98.92117309570312,0,3,50.3,44.3,11
+Kerrville / Guadalupe River,July 2025 Texas Hill Country flooding,Kerr County,11,34.309,49.2,0.182,0.256,0.26,0.685,30.04153896860281,-99.14224798029119,0,3,40.3,40.7,12
+Ingram / Guadalupe River,July 2025 Texas Hill Country flooding,Kerr County,11,30.882,43.1,0.455,0.256,0.223,0.569,30.07157892144261,-99.23812866210938,0,6,35.8,38.4,13

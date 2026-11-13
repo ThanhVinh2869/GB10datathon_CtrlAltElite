@@ -1,0 +1,118 @@
+Nominatim fallback: 625 tiles (~11 min)
+  25/625
+  50/625
+  75/625
+  100/625
+  125/625
+  150/625
+  TXH_15357_27136_after_20170831_NOAA: HTTP Error 503: first byte timeout
+  175/625
+  TXH_15364_27142_after_20170831_NOAA: HTTP Error 503: first byte timeout
+  200/625
+  225/625
+  250/625
+  275/625
+  300/625
+  325/625
+  TXH_15342_27094_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15342_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15343_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15343_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15344_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27091_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  350/625
+  TXH_15345_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27094_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15345_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27085_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27091_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15346_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27091_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15347_27094_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27080_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27081_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27084_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  375/625
+  TXH_15348_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27094_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15348_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27080_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27081_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27084_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27085_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27091_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15349_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27080_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27081_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27082_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27084_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27085_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27087_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  400/625
+  TXH_15350_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15350_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27080_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27081_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27082_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27085_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27094_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15351_27095_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27073_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27075_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27076_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27077_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27078_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27079_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27081_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27082_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27084_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27085_after_20170830_NOAA: HTTP Error 429: Too many requests
+  425/625
+  TXH_15352_27086_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27088_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27089_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27090_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27092_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27093_after_20170830_NOAA: HTTP Error 429: Too many requests
+  TXH_15352_27094_after_20170830_NOAA: HTTP Error 429: Too many requests

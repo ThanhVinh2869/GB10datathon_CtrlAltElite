@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HydroAlert</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="data.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --accent: #2a78d6; --accent-wash: #cde2fb;
+  --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --accent: #3987e5; --accent-wash: #184f95;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --accent: #3987e5; --accent-wash: #184f95;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--page); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { padding: 16px 20px 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+h1 { font-size: 20px; margin: 0; font-weight: 600; }
+.sub { color: var(--ink-2); font-size: 13px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 20px 12px; }
+.filters label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 13px; }
+select, input[type=range] { accent-color: var(--accent); }
+select { background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font: inherit; }
+.chip-toggle { border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px 3px 8px; cursor: pointer; background: var(--surface); }
+.chip-toggle input { margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding: 0 20px 12px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+.stat .label { color: var(--ink-2); font-size: 12px; }
+.stat .value { font-size: 24px; font-weight: 600; }
+.stat .hint { color: var(--muted); font-size: 12px; }
+.stat.hero .value { font-size: 48px; line-height: 1.05; }
+main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(440px, 1fr); gap: 12px; padding: 0 20px 20px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; min-width: 0; }
+#map { height: 640px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 8px 12px; border-top: 1px solid var(--grid); font-size: 12px; color: var(--ink-2); }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.heatkey { width: 90px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, rgba(250,178,25,.2), #fab219, #ec835a, #d03b3b); }
+.tabs { display: flex; border-bottom: 1px solid var(--grid); overflow-x: auto; }
+.tabs button { flex: 1 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; color: var(--ink-2); font: inherit; cursor: pointer; }
+.tabs button[aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.panel { height: 600px; overflow: auto; padding: 8px 12px 12px; }
+.panel[hidden] { display: none; }
+.note { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 6px 6px; border-bottom: 1px solid var(--axis); position: sticky; top: 0; background: var(--surface); }
+td.name { min-width: 150px; }
+td { padding: 6px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.click { cursor: pointer; }
+tr.click:hover, tr.click:focus { background: color-mix(in srgb, var(--accent) 8%, transparent); outline: none; }
+.bar { height: 8px; border-radius: 0 4px 4px 0; background: var(--accent); min-width: 2px; }
+.bartrack { width: 100%; min-width: 60px; }
+.tier { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; white-space: nowrap; }
+.tier i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.rank { color: var(--muted); font-variant-numeric: tabular-nums; }
+.small { color: var(--ink-2); font-size: 12px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.pair figure { margin: 0; }
+.pair img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; display: block; background: var(--grid); }
+.pair figcaption { font-size: 12px; color: var(--muted); margin-top: 2px; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; font-size: 13px; }
+dl.kv dt { color: var(--ink-2); } dl.kv dd { margin: 0; }
+.comp { display: grid; grid-template-columns: 110px 1fr 40px; gap: 6px; align-items: center; font-size: 12px; margin: 3px 0; }
+.comp .track { background: var(--grid); height: 8px; border-radius: 4px; }
+.comp .fill { background: var(--accent); height: 8px; border-radius: 4px; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tags span { border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; font-size: 12px; }
+.tip { position: fixed; pointer-events: none; z-index: 2000; background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.15); max-width: 260px; display: none; }
+.tip strong { font-size: 14px; }
+.leaflet-container { background: var(--grid); font: inherit; }
+.lwc-icon { width: 14px; height: 14px; transform: rotate(45deg); border: 2px solid #fff; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.4); }
+footer { padding: 0 20px 24px; color: var(--muted); font-size: 12px; }
+.mapwrap { position: relative; }
+@media (max-width: 900px) {
+  header, .filters, .stats, main, footer { padding-left: 16px; padding-right: 16px; }
+  main { grid-template-columns: minmax(0, 1fr); }
+  #map { height: 420px; }
+  .panel { height: auto; max-height: 560px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>HydroAlert</h1>
+  <span class="sub">AI-powered aerial analysis spotting the Texas streets, crossings and neighborhoods most at risk when flash floods hit</span>
+</header>
+
+<div class="filters" role="group" aria-label="Filters">
+  <label>Event <select id="f-event"><option value="">All events</option></select></label>
+  <label>Neighborhood <select id="f-loc"><option value="">All neighborhoods</option></select></label>
+  <span id="f-tiers" style="display:flex;gap:6px;flex-wrap:wrap"></span>
+  <label>Min risk <input type="range" id="f-min" min="0" max="90" step="5" value="0"><span id="f-min-v">0</span></label>
+  <label class="chip-toggle"><input type="checkbox" id="l-heat" checked> Heatmap</label>
+  <label class="chip-toggle"><input type="checkbox" id="l-tiles" checked> Tile footprints</label>
+  <label class="chip-toggle"><input type="checkbox" id="l-lwc" checked> Low-water crossings</label>
+</div>
+
+<section class="stats" id="stats" aria-label="Summary"></section>
+
+<main>
+  <div class="card">
+    <div class="mapwrap">
+      <div id="map" role="region" aria-label="Flood risk map"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="card">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="nb" aria-selected="true">Neighborhoods</button>
+      <button role="tab" data-tab="ws" aria-selected="false">Watersheds</button>
+      <button role="tab" data-tab="st" aria-selected="false">Streets</button>
+      <button role="tab" data-tab="cx" aria-selected="false">Crossings</button>
+      <button role="tab" data-tab="tile" aria-selected="false">Tile detail</button>
+    </div>
+    <div class="panel" id="p-nb"></div>
+    <div class="panel" id="p-ws" hidden></div>
+    <div class="panel" id="p-st" hidden></div>
+    <div class="panel" id="p-cx" hidden></div>
+    <div class="panel" id="p-tile" hidden><p class="note">Click a tile on the map or a row in any list to see its before/after imagery and the evidence behind its score.</p></div>
+  </div>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+(() => {
+const D = window.FLOOD_DATA;
+if (!D) { document.body.textContent = "data.js not found - run flood_risk/build_risk.py first."; return; }
+
+const TIERS = [
+  { key: "critical", label: "Critical", min: 70, color: "var(--critical)", hex: "#d03b3b" },
+  { key: "high",     label: "High",     min: 50, color: "var(--serious)",  hex: "#ec835a" },
+  { key: "moderate", label: "Moderate", min: 30, color: "var(--warning)",  hex: "#fab219" },
+  { key: "low",      label: "Low",      min: 0,  color: "var(--good)",     hex: "#0ca30c" },
+];
+const TIER = Object.fromEntries(TIERS.map(t => [t.key, t]));
+const tierOf = r => TIERS.find(t => r >= t.min);
+
+// --- DOM helper: all data text goes through textContent ---
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k === "style") n.style.cssText = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return n;
+}
+const fmt = (v, d = 0) => v == null || isNaN(v) ? "-" : Number(v).toFixed(d);
+const pct = v => `${Math.round(v * 100)}%`;
+function tierChip(key) {
+  const t = TIER[key];
+  return el("span", { class: "tier" }, el("i", { style: `background:${t.color}` }), t.label);
+}
+
+// --- state & filters ---
+const state = { event: "", loc: "", tiers: new Set(TIERS.map(t => t.key)), min: 0 };
+const fEvent = document.getElementById("f-event"), fLoc = document.getElementById("f-loc");
+[...new Set(D.tiles.map(t => t.event))].sort().forEach(e => fEvent.append(el("option", { value: e }, e)));
+function fillLoc() {
+  const cur = fLoc.value;
+  fLoc.replaceChildren(el("option", { value: "" }, "All neighborhoods"));
+  [...new Set(D.tiles.filter(t => !state.event || t.event === state.event).map(t => t.loc))].sort()
+    .forEach(l => fLoc.append(el("option", { value: l }, l)));
+  fLoc.value = [...fLoc.options].some(o => o.value === cur) ? cur : "";
+  state.loc = fLoc.value;
+}
+{ const counts = {}; D.tiles.forEach(t => counts[t.event] = (counts[t.event] || 0) + 1);
+  state.event = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]; fEvent.value = state.event; }
+fillLoc();
+const tierBox = document.getElementById("f-tiers");
+TIERS.forEach(t => {
+  const cb = el("input", { type: "checkbox", checked: "" });
+  cb.addEventListener("change", () => { cb.checked ? state.tiers.add(t.key) : state.tiers.delete(t.key); render(); });
+  tierBox.append(el("label", { class: "chip-toggle" }, cb, el("i", { class: "sw", style: `background:${t.color};width:8px;height:8px;border-radius:50%` }), t.label));
+});
+fEvent.addEventListener("change", () => { state.event = fEvent.value; fillLoc(); applyRegion(); render(true); });
+fLoc.addEventListener("change", () => { state.loc = fLoc.value; render(true); });
+const fMin = document.getElementById("f-min");
+fMin.addEventListener("input", () => { state.min = +fMin.value; document.getElementById("f-min-v").textContent = fMin.value; render(); });
+
+const inScope = t => (!state.event || t.event === state.event) && (!state.loc || t.loc === state.loc);
+const visible = t => inScope(t) && state.tiers.has(t.tier) && t.risk >= state.min;
+const tileById = Object.fromEntries(D.tiles.map(t => [t.id, t]));
+
+// --- map ---
+const map = L.map("map", { preferCanvas: true, maxBoundsViscosity: 1.0 });
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  { maxZoom: 19, attribution: "Imagery &copy; Esri" });
+// Esri basemaps: keyless and work from file:// (OSM's servers block missing Referer; CARTO now needs an API key).
+const esri = (path, opts = {}) => L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`,
+  { maxZoom: 19, attribution: "Basemap &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors", ...opts });
+const light = L.layerGroup([esri("Canvas/World_Light_Gray_Base", { maxNativeZoom: 16 }), esri("Canvas/World_Light_Gray_Reference", { maxNativeZoom: 16 })]);
+const dark = L.layerGroup([esri("Canvas/World_Dark_Gray_Base", { maxNativeZoom: 16 }), esri("Canvas/World_Dark_Gray_Reference", { maxNativeZoom: 16 })]);
+const streets = esri("World_Street_Map");
+light.addTo(map);
+L.control.layers({ "Light gray": light, "Dark gray": dark, "Streets": streets, "Satellite": sat }, null, { position: "topright" }).addTo(map);
+const tileLayer = L.layerGroup().addTo(map);
+const lwcLayer = L.layerGroup();
+let heat = L.heatLayer([], { radius: 22, blur: 18, maxZoom: 14, minOpacity: 0.25,
+  gradient: { 0.2: "rgba(250,178,25,0.35)", 0.5: "#fab219", 0.75: "#ec835a", 1.0: "#d03b3b" } }).addTo(map);
+const toggles = { "l-heat": heat, "l-tiles": tileLayer };
+Object.entries(toggles).forEach(([id, layer]) => document.getElementById(id).addEventListener("change", e =>
+  e.target.checked ? layer.addTo(map) : map.removeLayer(layer)));
+const LWC_MIN_ZOOM = 12;
+function syncLwc() {
+  const on = document.getElementById("l-lwc").checked && map.getZoom() >= LWC_MIN_ZOOM;
+  on ? lwcLayer.addTo(map) : map.removeLayer(lwcLayer);
+}
+document.getElementById("l-lwc").addEventListener("change", syncLwc);
+map.on("zoomend", syncLwc);
+
+const tip = document.getElementById("tip");
+function showTip(ev, value, label, extra) {
+  tip.replaceChildren(...[el("strong", {}, value), el("div", { class: "small" }, label), extra ? el("div", { class: "small" }, extra) : null].filter(Boolean));
+  tip.style.display = "block";
+  const x = ev.originalEvent ? ev.originalEvent.clientX : ev.clientX, y = ev.originalEvent ? ev.originalEvent.clientY : ev.clientY;
+  tip.style.left = Math.min(x + 14, innerWidth - 270) + "px"; tip.style.top = (y + 14) + "px";
+}
+const hideTip = () => tip.style.display = "none";
+
+function drawMap(fit) {
+  tileLayer.clearLayers(); lwcLayer.clearLayers();
+  const vis = D.tiles.filter(visible);
+  heat.setLatLngs(vis.map(t => [t.lat, t.lon, Math.max(0.05, t.risk / 100)]));
+  vis.forEach(t => {
+    const c = TIER[t.tier].hex;
+    const r = L.rectangle([[t.b[0], t.b[1]], [t.b[2], t.b[3]]],
+      { color: c, weight: 1.5, fillColor: c, fillOpacity: 0.28 });
+    r.on("mousemove", e => showTip(e, `Risk ${fmt(t.risk)}`, `${TIER[t.tier].label} · ${t.loc}`, `Severity ${t.sev}/5 · new water ${t.water}% · roads ${t.roads}`));
+    r.on("mouseout", hideTip);
+    r.on("click", () => showTile(t.id));
+    tileLayer.addLayer(r);
+  });
+  const shownTiles = new Set(vis.map(t => t.id));
+  D.crossings.filter(c => c.flagged !== false && shownTiles.has(c.tile)).forEach(c => {
+    const mapped = c.kind !== "VLM-detected crossing";
+    const icon = L.divIcon({ className: "", iconSize: [14, 14],
+      html: `<div class="lwc-icon" style="background:${mapped ? "#2a78d6" : "#6250d6"}"></div>` });
+    const m = L.marker([c.lat, c.lon], { icon, keyboard: true });
+    m.on("mouseover", e => showTip(e, c.name, c.kind, `${c.loc} · tile risk ${fmt(c.risk)}`));
+    m.on("mouseout", hideTip);
+    m.on("click", () => showTile(c.tile));
+    lwcLayer.addLayer(m);
+  });
+  if (fit) {
+    const src = vis.length ? vis : D.tiles.filter(inScope);
+    if (src.length) map.fitBounds(L.latLngBounds(src.map(t => [[t.b[0], t.b[1]], [t.b[2], t.b[3]]]).flat()), { padding: [20, 20] });
+  }
+}
+
+// legend
+const lg = document.getElementById("legend");
+TIERS.forEach(t => lg.append(el("span", { class: "key" }, el("span", { class: "sw", style: `background:${t.color}` }), `${t.label} (${t.min}+)`)));
+lg.append(el("span", { class: "key" }, el("span", { class: "heatkey" }), "Heat = tile risk"));
+lg.append(el("span", { class: "key" }, el("span", { class: "sw", style: "background:#2a78d6;transform:rotate(45deg);width:10px;height:10px" }), "Mapped road-creek crossing (TIGER)"));
+lg.append(el("span", { class: "key" }, el("span", { class: "sw", style: "background:#6250d6;transform:rotate(45deg);width:10px;height:10px" }), "VLM-detected crossing"));
+lg.append(el("span", { class: "key" }, "Crossings appear at zoom 12+"));
+
+// --- stats ---
+function drawStats() {
+  const s = document.getElementById("stats");
+  const vis = D.tiles.filter(visible);
+  const n = vis.length || 1;
+  const crit = vis.filter(t => t.tier === "critical").length;
+  const high = vis.filter(t => t.tier === "high").length;
+  const roads = vis.filter(t => t.roads !== "none").length;
+  const lwc = vis.filter(t => t.lwc).length;
+  const meanRisk = vis.reduce((a, t) => a + t.risk, 0) / n;
+  const stat = (label, value, hint, hero) => el("div", { class: "stat" + (hero ? " hero" : "") },
+    el("div", { class: "label" }, label), el("div", { class: "value" }, value), el("div", { class: "hint" }, hint));
+  s.replaceChildren(
+    stat("Critical + high-risk tiles", (crit + high).toLocaleString(), `${crit} critical · ${high} high of ${vis.length} shown`, true),
+    stat("Mean tile risk", fmt(meanRisk), "0-100 composite"),
+    stat("Tiles with flooded roads", roads.toLocaleString(), `${pct(roads / n)} of shown tiles`),
+    stat("Low-water crossing tiles", lwc.toLocaleString(), "Mapped (TIGER) or VLM-detected"),
+    stat("Susceptibility model AUC", fmt(D.summary.auc, 2), "spatial cross-validation"),
+  );
+}
+
+// --- tables ---
+function scoreBar(v, max) {
+  return el("div", { class: "bartrack" }, el("div", { class: "bar", style: `width:${Math.max(2, v / max * 100)}%` }));
+}
+function rowClick(tr, fn) { tr.classList.add("click"); tr.tabIndex = 0; tr.addEventListener("click", fn); tr.addEventListener("keydown", e => e.key === "Enter" && fn()); return tr; }
+
+function drawNeighborhoods() {
+  const p = document.getElementById("p-nb");
+  // recompute from currently visible tiles so the table always agrees with the map
+  const groups = {};
+  D.tiles.filter(visible).forEach(t => (groups[t.loc] ||= []).push(t));
+  const base = Object.fromEntries(D.neighborhoods.map(n => [n.locality, n]));
+  const rows = Object.entries(groups).map(([loc, ts]) => {
+    const r = ts.map(t => t.risk).sort((a, b) => a - b);
+    const mean = r.reduce((a, b) => a + b, 0) / r.length;
+    const p90 = r[Math.min(r.length - 1, Math.floor(0.9 * (r.length - 1) + 0.5))];
+    const raw = 0.6 * mean + 0.4 * p90, K = D.summary.shrink_k ?? 10;
+    const prior = D.summary.event_mean[ts[0].event];
+    return { loc, raw, score: (ts.length * raw + K * prior) / (ts.length + K), n: ts.length, flooded: ts.filter(t => t.sev >= 3).length / ts.length,
+      crit: ts.filter(t => t.tier === "critical").length, lwc: ts.filter(t => t.lwc).length, county: base[loc]?.county || "", ts };
+  }).sort((a, b) => b.score - a.score);
+  const max = Math.max(100, ...rows.map(r => r.score));
+  const tb = el("tbody");
+  rows.forEach((r, i) => tb.append(rowClick(el("tr", {},
+    el("td", { class: "rank" }, i + 1),
+    el("td", { class: "name" }, el("div", {}, r.loc), el("div", { class: "small" }, r.county)),
+    el("td", { class: "num" }, fmt(r.score)),
+    el("td", { style: "width:16%" }, scoreBar(r.score, max)),
+    el("td", {}, tierChip(tierOf(r.score).key)),
+    el("td", { class: "num" }, pct(r.flooded)),
+    el("td", { class: "num" }, r.crit),
+    el("td", { class: "num" }, r.lwc),
+    el("td", { class: "num" }, r.n)), () => { fLoc.value = r.loc; state.loc = r.loc; render(true); })));
+  p.replaceChildren(
+    el("p", { class: "note" }, `Score = 0.6 × mean + 0.4 × 90th-percentile tile risk, shrunk toward its event's mean tile risk by ${D.summary.shrink_k} pseudo-tiles so small samples don't dominate. Click a row to zoom.`),
+    el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "#"), el("th", {}, "Neighborhood"), el("th", { class: "num" }, "Score"),
+      el("th", {}, ""), el("th", {}, "Tier"), el("th", { class: "num" }, "Flooded"), el("th", { class: "num" }, "Critical"),
+      el("th", { class: "num" }, "Crossings"), el("th", { class: "num" }, "Tiles"))), tb));
+}
+
+function drawWatersheds() {
+  const p = document.getElementById("p-ws");
+  const rows = D.watersheds.filter(w => (!state.loc || w.locality === state.loc) &&
+    (!state.event || D.tiles.some(t => t.loc === w.locality && t.event === state.event)));
+  const tb = el("tbody");
+  rows.forEach((w, i) => tb.append(rowClick(el("tr", {},
+    el("td", { class: "rank" }, i + 1),
+    el("td", {}, el("div", {}, w.ws_name), el("div", { class: "small" }, w.locality)),
+    el("td", { class: "num" }, fmt(w.score)),
+    el("td", { style: "width:16%" }, scoreBar(w.score, 100)),
+    el("td", {}, tierChip(tierOf(w.score).key)),
+    el("td", { class: "num" }, pct(w.flooded_share)),
+    el("td", { class: "num" }, w.tiles)), () => {
+      const ts = D.tiles.filter(t => t.loc === w.locality && t.ws === w.ws_name);
+      if (ts.length) map.fitBounds(L.latLngBounds(ts.map(t => [[t.b[0], t.b[1]], [t.b[2], t.b[3]]]).flat()), { padding: [30, 30] });
+    })));
+  p.replaceChildren(el("p", { class: "note" }, "Sub-neighborhood ranking by USGS HUC-12 watershed (creek basin), same shrunk score. Click to zoom."),
+    el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "#"), el("th", {}, "Watershed"), el("th", { class: "num" }, "Score"), el("th", {}, ""),
+      el("th", {}, "Tier"), el("th", { class: "num" }, "Flooded"), el("th", { class: "num" }, "Tiles"))), tb));
+}
+
+function drawStreets() {
+  const p = document.getElementById("p-st");
+  const rows = D.streets.filter(s => { const t = tileById[s.tile]; return t && visible(t); });
+  const tb = el("tbody");
+  rows.forEach((s, i) => tb.append(rowClick(el("tr", {},
+    el("td", { class: "rank" }, i + 1),
+    el("td", {}, el("div", {}, s.name), el("div", { class: "small" }, `${s.suburb ? s.suburb + " · " : ""}${s.loc} · ${s.type}`)),
+    el("td", { class: "num" }, fmt(s.risk)),
+    el("td", {}, tierChip(tierOf(s.risk).key)),
+    el("td", {}, s.basis || (s.observed ? "Observed" : "Predicted")),
+    el("td", { class: "num" }, s.tiles)), () => showTile(s.tile, true))));
+  p.replaceChildren(
+    el("p", { class: "note" }, "All named streets (US Census TIGER/Line 2024) in the scored tiles, ranked by highest tile risk. Basis: Observed = Qwen saw flooded roads in the tile; Predicted = terrain model gives ≥60% flood probability; Not flagged = neither."),
+    rows.length ? el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "#"), el("th", {}, "Street"), el("th", { class: "num" }, "Risk"),
+      el("th", {}, "Tier"), el("th", {}, "Basis"), el("th", { class: "num" }, "Tiles"))), tb)
+      : el("p", { class: "note" }, "No streets match the current filters."));
+}
+
+function drawCrossings() {
+  const p = document.getElementById("p-cx");
+  const rows = D.crossings.filter(c => { const t = tileById[c.tile]; return t && visible(t); });
+  const tb = el("tbody");
+  rows.forEach((c, i) => tb.append(rowClick(el("tr", {},
+    el("td", { class: "rank" }, i + 1),
+    el("td", {}, el("div", {}, c.name), el("div", { class: "small" }, `${c.kind} · ${c.loc}`)),
+    el("td", { class: "num" }, fmt(c.risk)),
+    el("td", {}, tierChip(tierOf(c.risk).key)),
+    el("td", { class: "small" }, c.flagged === false ? "Not flagged" : c.why)), () => { map.setView([c.lat, c.lon], 16); showTile(c.tile); })));
+  p.replaceChildren(
+    el("p", { class: "note" }, "All minor roads crossing a creek, bayou or channel (TIGER/Line road × waterway intersections) in the scored tiles, plus crossings Qwen saw overtopped. Flagged crossings are in flooded or flood-prone tiles and are the ones shown on the map. VLM-only detections are less reliable - verify on the imagery."),
+    rows.length ? el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "#"), el("th", {}, "Crossing"), el("th", { class: "num" }, "Risk"),
+      el("th", {}, "Tier"), el("th", {}, "Why flagged"))), tb) : el("p", { class: "note" }, "No crossings match the current filters."));
+}
+
+// --- tile detail ---
+let selRect = null;
+function showTile(id, zoomTo = false) {
+  const t = tileById[id]; if (!t) return;
+  if ((state.event && t.event !== state.event) || (state.loc && t.loc !== state.loc)) {  // tile is outside current filters
+    if (state.event !== t.event) { state.event = t.event; fEvent.value = t.event; fillLoc(); applyRegion(); }
+    state.loc = ""; fLoc.value = ""; render(false); zoomTo = true;
+  }
+  history.replaceState(null, "", "#tile=" + encodeURIComponent(id));
+  selectTab("tile");
+  if (selRect) map.removeLayer(selRect);
+  selRect = L.rectangle([[t.b[0], t.b[1]], [t.b[2], t.b[3]]], { color: "#2a78d6", weight: 3, fill: false }).addTo(map);
+  if (zoomTo || !map.getBounds().contains(selRect.getBounds())) map.setView([t.lat, t.lon], Math.max(15, map.getZoom()));
+  const comp = (label, v) => el("div", { class: "comp" }, el("span", {}, label),
+    el("div", { class: "track" }, el("div", { class: "fill", style: `width:${Math.round(v * 100)}%` })), el("span", { class: "num" }, pct(v)));
+  const p = document.getElementById("p-tile");
+  p.replaceChildren(...[
+    el("div", { style: "display:flex;justify-content:space-between;align-items:baseline;gap:8px" },
+      el("div", {}, el("div", { style: "font-weight:600" }, t.loc), el("div", { class: "small" }, `${t.event} · ${t.date}`),
+        t.event_pct != null ? el("div", { class: "small" }, `Riskier than ${t.event_pct}% of ${t.event} tiles`) : null),
+      el("div", { style: "text-align:right" }, el("div", { style: "font-size:28px;font-weight:600" }, fmt(t.risk)), tierChip(t.tier))),
+    el("div", { class: "pair" },
+      t.before ? el("figure", {}, el("img", { src: `thumbs/${t.before}.jpg`, alt: "Before image" }), el("figcaption", {}, "Before (baseline)")) : null,
+      el("figure", {}, el("img", { src: `thumbs/${t.id}.jpg`, alt: "After image" }), el("figcaption", {}, "After / response"))),
+    t.aftermath ? el("p", { class: "note", style: "border-left:3px solid var(--warning);padding-left:8px" },
+      "Aftermath image: flown days after the July 4, 2025 peak with no baseline pair, so observed impact understates peak flooding. Compare it with other Hill Country tiles, not with Harvey.") : null,
+    el("div", { style: "margin:6px 0 4px;font-weight:600;font-size:13px" }, "Score components"),
+    comp("Observed impact", t.obs), comp("Predicted (terrain)", t.pred), comp("Exposure", t.exp),
+    el("dl", { class: "kv" },
+      el("dt", {}, "Qwen severity"), el("dd", {}, `${t.sev} / 5 (confidence ${fmt(t.conf, 2)})`),
+      el("dt", {}, "New water"), el("dd", {}, `${t.water}% of footprint`),
+      el("dt", {}, "Roads flooded"), el("dd", {}, `${t.roads}${t.road_desc ? " - " + t.road_desc : ""}`),
+      el("dt", {}, "Buildings"), el("dd", {}, t.bldg),
+      el("dt", {}, "Low-water crossing"), el("dd", {}, t.lwc ? t.lwc_why.join("; ") : "not flagged"),
+      el("dt", {}, "Evidence"), el("dd", {}, t.notes),
+      el("dt", {}, "Elevation"), el("dd", {}, t.elev == null ? "-" : `${t.elev} m (${t.rel_elev > 0 ? "+" : ""}${t.rel_elev} m vs neighborhood median)`),
+      el("dt", {}, "FEMA zone"), el("dd", {}, t.fema_known === false ? "unknown (no FEMA data; not evidence of low risk)" : ((t.fema || "").replace(/[\[\]"]/g, "") || "-")),
+      el("dt", {}, "Suburb"), el("dd", {}, t.suburb || "-"),
+      el("dt", {}, "Watershed"), el("dd", {}, t.ws || "-"),
+      el("dt", {}, "County"), el("dd", {}, t.county || "-")),
+    t.streets.length ? el("div", {}, el("div", { class: "small", style: "margin-bottom:4px" }, "Streets in this tile (TIGER/Line)"),
+      el("div", { class: "tags" }, t.streets.map(s => el("span", {}, s)))) : null].filter(Boolean));
+}
+
+// --- tabs ---
+function selectTab(key) {
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === key)));
+  document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== "p-" + key);
+}
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => selectTab(b.dataset.tab)));
+
+// ================= region lock =================
+// Panning and zoom-out are limited to the area around the imagery (~15 km margin).
+const REGION_PAD = 0.15; // degrees
+function boundsOf(ts) {
+  const b = L.latLngBounds(ts.map(t => [[t.b[0], t.b[1]], [t.b[2], t.b[3]]]).flat());
+  return L.latLngBounds([b.getSouth() - REGION_PAD, b.getWest() - REGION_PAD], [b.getNorth() + REGION_PAD, b.getEast() + REGION_PAD]);
+}
+const eventBounds = {};
+[...new Set(D.tiles.map(t => t.event))].forEach(e => eventBounds[e] = boundsOf(D.tiles.filter(t => t.event === e)));
+const allBounds = boundsOf(D.tiles);
+function regionBounds() { return state.event ? eventBounds[state.event] : allBounds; }
+function applyRegion() {
+  const b = regionBounds();
+  map.setMaxBounds(null); map.setMinZoom(0);
+  map.fitBounds(b, { animate: false });
+  map.setMinZoom(map.getBoundsZoom(b));
+  map.setMaxBounds(b);
+}
+window.addEventListener("resize", () => { const b = regionBounds(); map.setMinZoom(0); map.setMinZoom(map.getBoundsZoom(b)); });
+
+function render(fit) { drawMap(fit); drawStats(); drawNeighborhoods(); drawWatersheds(); drawStreets(); drawCrossings(); }
+applyRegion();
+render(true);
+const deep = new URLSearchParams(location.hash.slice(1)).get("tile");
+if (deep) showTile(deep, true);
+
+})();
+</script>
+</body>
+</html>

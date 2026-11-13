@@ -1,0 +1,4 @@
+# Optional: notebook 2, Method B (direct image embeddings). Python 3.10+.
+sentence-transformers[image]>=5.4,<7
+transformers>=4.57,<6
+torch>=2.8,<3

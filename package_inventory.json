@@ -1,0 +1,52 @@
+[
+  {
+    "file": "01_Image_Question_Answering.ipynb",
+    "bytes": 1972,
+    "sha256": "58bc9cbaad36789c8120320dde117facd0b135a646d24d9eb43e33fa3749cf40"
+  },
+  {
+    "file": "02_Text_to_Image_Retrieval.ipynb",
+    "bytes": 6163,
+    "sha256": "3e8fc1593090177d8687cd56642bde207576d191142e5dec2c076954e60d0e41"
+  },
+  {
+    "file": "03_Before_After_Change_and_Weather.ipynb",
+    "bytes": 2444,
+    "sha256": "cce52bbf89da7072607121e0fcb3e411963d3303dc1b8bc82e7af86b30786416"
+  },
+  {
+    "file": "texas_flood.py",
+    "bytes": 6107,
+    "sha256": "1819ac6462f2c66c1334f08223cfcaeb2bd9dc7b6b9c2d56937acc1b08dbbe7a"
+  },
+  {
+    "file": "image_embeddings.py",
+    "bytes": 1639,
+    "sha256": "0b62df6d0bba3e2d05532bb2e0ea1102626e19cb803217a757e44785a0e4f361"
+  },
+  {
+    "file": "vlm_config.py",
+    "bytes": 209,
+    "sha256": "b5cc668be57fab031616022c9e21bac09b2ac6ad579b11cbd46b6af50ffb9507"
+  },
+  {
+    "file": "README.txt",
+    "bytes": 4289,
+    "sha256": "4ae9bf1c5833275097ae3e20b7c17f0d524d7c3ba0b959c11587fffff76ad383"
+  },
+  {
+    "file": "requirements.txt",
+    "bytes": 98,
+    "sha256": "8cdf9b86706b814567aacfc9482183cab3dc32534f109f841704bdfb905da422"
+  },
+  {
+    "file": "requirements-embeddings.txt",
+    "bytes": 147,
+    "sha256": "36d7ab1777a26b3ffb3d7a07e3c4e768ec3bd564b53c650328653f59b1adc1ec"
+  },
+  {
+    "file": "validation.json",
+    "bytes": 1624,
+    "sha256": "7fc6b2a34053d2e98ccdc296293f275962d9ee884044205637b20714de80fdf8"
+  }
+]
