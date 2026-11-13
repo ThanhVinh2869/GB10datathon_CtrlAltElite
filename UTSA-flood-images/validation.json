@@ -1,0 +1,40 @@
+[
+  {
+    "notebook": "01_Image_Question_Answering.ipynb",
+    "schema_valid": true,
+    "code_cells_executed": 2,
+    "code_lines_including_blank_lines": 7,
+    "real_texas_data_with_test_only_model_stubs": "PASS",
+    "expected_model_requests_verified": 1,
+    "figures_rendered": 1,
+    "live_vlm_inference": "not_verified_server_previously_timed_out"
+  },
+  {
+    "notebook": "02_Text_to_Image_Retrieval.ipynb",
+    "schema_valid": true,
+    "code_cells_executed": 6,
+    "code_lines_including_blank_lines": 29,
+    "real_texas_data_with_test_only_model_stubs": "PASS",
+    "expected_model_requests_verified": 6,
+    "figures_rendered": 2,
+    "live_vlm_inference": "not_verified_server_previously_timed_out",
+    "direct_image_embeddings_helper_with_stub_backend": "PASS",
+    "embedding_pixel_rgb_order_and_metadata_independence": "PASS",
+    "embedding_query_normalization_and_ranking_logic": "PASS",
+    "embedding_cpu_and_cuda_configuration_with_stub_torch": "PASS",
+    "method_b_without_tfidf_or_api_calls": "PASS",
+    "method_b_only_figures_rendered": 1,
+    "actual_qwen_embedding_inference": "not_run_weights_not_downloaded",
+    "embedding_fixture_warning": "Synthetic vectors validate plumbing only; no retrieval quality was measured."
+  },
+  {
+    "notebook": "03_Before_After_Change_and_Weather.ipynb",
+    "schema_valid": true,
+    "code_cells_executed": 3,
+    "code_lines_including_blank_lines": 9,
+    "real_texas_data_with_test_only_model_stubs": "PASS",
+    "expected_model_requests_verified": 1,
+    "figures_rendered": 2,
+    "live_vlm_inference": "not_verified_server_previously_timed_out"
+  }
+]
